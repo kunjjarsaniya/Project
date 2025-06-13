@@ -48,9 +48,9 @@
             background-color: var(--bg-secondary);
             border-right: 1px solid var(--border-color);
             padding: 2rem 0;
-            position: fixed;
+            position: relative; /* Changed from fixed to relative */
             width: 280px;
-            height: 100vh;
+            /* height: 100vh; Removed height */
             overflow-y: auto;
             z-index: 100;
             transition: transform 0.3s ease;
@@ -132,7 +132,7 @@
 
         /* Main Content */
         .main-content {
-            margin-left: 280px;
+            /* margin-left: 280px; Removed margin-left */
             padding: 2rem;
             min-height: 100vh;
             background: linear-gradient(135deg, var(--bg-primary) 0%, #252525 100%);

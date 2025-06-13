@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Interactive Notice Board</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Font Awesome for Bell Icon -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #111;
+      color: #eee;
+    }
+
+    .btn {
+      cursor: pointer;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: background-color 0.3s;
+    }
+
+    .btn-secondary {
+      background-color: #444;
+      color: #fff;
+    }
+
+    .btn-secondary:hover {
+      background-color: #555;
+    }
+
+    .notice-board {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 350px;
+      height: 100vh;
+      background-color: #1c1c1c;
+      box-shadow: -2px 0 10px rgba(0, 0, 0, 0.7);
+      padding: 20px;
+      z-index: 999;
+      transform: translateX(100%);
+      transition: transform 0.5s ease;
+    }
+
+    .notice-board.show {
+      transform: translateX(0%);
+    }
+
+    .notice-board h2 {
+      margin-top: 0;
+      font-size: 22px;
+      color: #fff;
+    }
+
+    .notice-board p {
+      font-size: 14px;
+      color: #aaa;
+    }
+
+    .no-notice {
+      margin-top: 100px;
+      text-align: center;
+      color: #555;
+      font-size: 16px;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: transparent;
+      border: none;
+      font-size: 20px;
+      color: #aaa;
+      cursor: pointer;
+    }
+
+    @media (max-width: 400px) {
+      .notice-board {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <button class="btn btn-secondary" onclick="toggleNoticeBoard()">
+    <i class="fas fa-bell"></i> Notice Board
+  </button>
+
+  <div id="noticeBoard" class="notice-board">
+    <button class="close-btn" onclick="toggleNoticeBoard()">&times;</button>
+    <h2>Notice Board</h2>
+    <p>Keep track of important announcements and reminders.</p>
+    <div class="no-notice">No notices found.</div>
+  </div>
+
+  <script>
+    function toggleNoticeBoard() {
+      const board = document.getElementById('noticeBoard');
+      board.classList.toggle('show');
+    }
+  </script>
+
+</body>
+</html>

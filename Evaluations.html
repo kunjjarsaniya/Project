@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MasterJi - Evaluations</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --bg-tertiary: #3a3a3a;
+            --text-primary: #ffffff;
+            --text-secondary: #b3b3b3;
+            --text-muted: #808080;
+            --accent-orange: #ff6b35;
+            --accent-blue: #4a90e2;
+            --border-color: #404040;
+            --hover-bg: #404040;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            background-color: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            padding: 2rem 0;
+            position: fixed;
+            width: 280px;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+            transition: transform 0.3s ease;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--accent-orange), #ff8c42);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0 1rem;
+        }
+
+        .nav-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.875rem 1rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            background-color: var(--hover-bg);
+            color: var(--text-primary);
+            transform: translateX(4px);
+        }
+
+        .nav-link.active {
+            background-color: var(--accent-orange);
+            color: white;
+        }
+
+        .nav-link.active::before {
+            content: '';
+            position: absolute;
+            left: -1rem;
+            width: 4px;
+            height: 100%;
+            background-color: var(--accent-orange);
+            border-radius: 2px;
+        }
+
+        .nav-icon {
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            padding: 2rem;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, #252525 100%);
+        }
+
+        .header {
+            margin-bottom: 2rem;
+        }
+
+        .header-title {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .controls-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .search-container {
+            position: relative;
+            flex: 1;
+            max-width: 400px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.875rem 1rem 0.875rem 3rem;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .batch-selector {
+            padding: 0.875rem 1rem;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 150px;
+        }
+
+        .batch-selector:hover {
+            border-color: var(--accent-blue);
+            transform: translateY(-1px);
+        }
+
+        /* Tab Navigation */
+        .tab-navigation {
+            display: flex;
+            background-color: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 0.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-group {
+            display: flex;
+            flex: 1;
+            gap: 0.5rem;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: 12px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .tab-button:hover {
+            color: var(--text-primary);
+            background-color: var(--hover-bg);
+        }
+
+        .tab-button.active {
+            background-color: var(--accent-blue);
+            color: white;
+            box-shadow: 0 2px 8px rgba(74, 144, 226, 0.3);
+        }
+
+        .badge {
+            background-color: var(--bg-tertiary);
+            color: var(--text-secondary);
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .tab-button.active .badge {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        /* Filter Tabs */
+        .filter-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .filter-tab {
+            padding: 1rem 0;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-weight: 500;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .filter-tab:hover {
+            color: var(--text-primary);
+        }
+
+        .filter-tab.active {
+            color: var(--text-primary);
+        }
+
+        .filter-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: var(--accent-orange);
+            border-radius: 1px;
+        }
+
+        /* Content Area */
+        .content-area {
+            background-color: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 3rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .empty-state {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .empty-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--accent-orange), #ff8c42);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            font-size: 2rem;
+            color: white;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .empty-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--text-primary);
+        }
+
+        .empty-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* User Profile */
+        .user-profile {
+            position: fixed;
+            bottom: 2rem;
+            left: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background-color: var(--bg-tertiary);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .user-profile:hover {
+            background-color: var(--hover-bg);
+            transform: translateY(-2px);
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--success), #20c997);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .user-name {
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            width: 48px;
+            height: 48px;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .theme-toggle:hover {
+            background-color: var(--hover-bg);
+            transform: rotate(180deg);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .app-container {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+
+            .controls-section {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-container {
+                max-width: none;
+            }
+
+            .tab-navigation {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .tab-group {
+                flex-direction: column;
+            }
+
+            .filter-tabs {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+
+            .content-area {
+                padding: 2rem 1rem;
+            }
+
+            .user-profile {
+                position: relative;
+                bottom: auto;
+                left: auto;
+                margin: 2rem 1rem 0;
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--border-color);
+            border-radius: 50%;
+            border-top-color: var(--accent-blue);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Accessibility Improvements */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Focus States */
+        *:focus {
+            outline: 2px solid var(--accent-blue);
+            outline-offset: 2px;
+        }
+
+        .nav-link:focus,
+        .tab-button:focus,
+        .filter-tab:focus {
+            outline: 2px solid var(--accent-blue);
+            outline-offset: -2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="logo">
+                <div class="logo-icon">Ji</div>
+                <span class="logo-text">MasterJi</span>
+            </div>
+            
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="Dashboard.html" class="nav-link" data-page="dashboard">
+                        <i class="nav-icon fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="Peer_Reviews.html" class="nav-link" data-page="peer-reviews">
+                        <i class="nav-icon fas fa-star"></i>
+                        <span>Peer Reviews</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="Projects.html" class="nav-link" data-page="projects">
+                        <i class="nav-icon fas fa-folder"></i>
+                        <span>Projects</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="Blogs.html" class="nav-link" data-page="blogs">
+                        <i class="nav-icon fas fa-edit"></i>
+                        <span>Blogs</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="Evaluations.html" class="nav-link active" data-page="evaluations">
+                        <i class="nav-icon fas fa-clipboard-check"></i>
+                        <span>Evaluations</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header">
+                <h1 class="header-title">Evaluations</h1>
+                <p class="header-subtitle">Review and evaluate assignments assigned to you before the evaluation deadline.</p>
+            </header>
+
+            <section class="controls-section">
+                <div class="search-container">
+                    <i class="search-icon fas fa-search"></i>
+                    <input type="text" class="search-input" placeholder="Search Submitters" id="searchInput">
+                </div>
+                <select class="batch-selector" id="batchSelector">
+                    <option value="all">All Batches</option>
+                    <option value="batch1">Batch 2024-A</option>
+                    <option value="batch2">Batch 2024-B</option>
+                    <option value="batch3">Batch 2023-A</option>
+                </select>
+            </section>
+
+            <nav class="tab-navigation">
+                <div class="tab-group">
+                    <button class="tab-button active" data-tab="to-evaluate">
+                        <span>To Evaluate By You</span>
+                        <span class="badge" id="toEvaluateCount">0</span>
+                    </button>
+                    <button class="tab-button" data-tab="your-evaluations">
+                        <span>Your Evaluations By Others</span>
+                        <span class="badge" id="yourEvaluationsCount">0</span>
+                    </button>
+                </div>
+            </nav>
+
+            <div class="filter-tabs">
+                <button class="filter-tab active" data-filter="pending">Pending (0)</button>
+                <button class="filter-tab" data-filter="completed">Completed (0)</button>
+                <button class="filter-tab" data-filter="all">All</button>
+            </div>
+
+            <div class="content-area" id="contentArea">
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <h3 class="empty-title">No evaluations available in this category</h3>
+                    <p class="empty-description">
+                        When evaluations are assigned to you, they'll appear here. Check back later or contact your instructor if you believe this is an error.
+                    </p>
+                </div>
+            </div>
+        </main>
+
+        <!-- User Profile -->
+        <div class="user-profile" id="userProfile">
+            <div class="user-avatar">n</div>
+            <span class="user-name">nön one</span>
+        </div>
+
+        <!-- Theme Toggle -->
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+            <i class="fas fa-sun"></i>
+        </button>
+    </div>
+
+    <!-- Mobile Menu Button -->
+    <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle navigation menu">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <script>
+        class EvaluationInterface {
+            constructor() {
+                this.currentTab = 'to-evaluate';
+                this.currentFilter = 'pending';
+                this.evaluations = {
+                    'to-evaluate': {
+                        pending: [],
+                        completed: [],
+                        all: []
+                    },
+                    'your-evaluations': {
+                        pending: [],
+                        completed: [],
+                        all: []
+                    }
+                };
+                this.init();
+            }
+
+            init() {
+                this.bindEvents();
+                this.updateCounts();
+                this.handleResponsive();
+                this.loadMockData();
+            }
+
+            bindEvents() {
+                // Navigation links
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        this.handleNavigation(e.currentTarget);
+                    });
+                });
+
+                // Tab buttons
+                document.querySelectorAll('.tab-button').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        this.handleTabChange(e.currentTarget);
+                    });
+                });
+
+                // Filter tabs
+                document.querySelectorAll('.filter-tab').forEach(tab => {
+                    tab.addEventListener('click', (e) => {
+                        this.handleFilterChange(e.currentTarget);
+                    });
+                });
+
+                // Search input
+                const searchInput = document.getElementById('searchInput');
+                searchInput.addEventListener('input', (e) => {
+                    this.handleSearch(e.target.value);
+                });
+
+                // Batch selector
+                const batchSelector = document.getElementById('batchSelector');
+                batchSelector.addEventListener('change', (e) => {
+                    this.handleBatchChange(e.target.value);
+                });
+
+                // Theme toggle
+                const themeToggle = document.getElementById('themeToggle');
+                themeToggle.addEventListener('click', () => {
+                    this.toggleTheme();
+                });
+
+                // Mobile menu
+                const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+                if (mobileMenuBtn) {
+                    mobileMenuBtn.addEventListener('click', () => {
+                        this.toggleMobileMenu();
+                    });
+                }
+
+                // Keyboard navigation
+                document.addEventListener('keydown', (e) => {
+                    this.handleKeyboardNavigation(e);
+                });
+            }
+
+            handleNavigation(link) {
+                // Remove active class from all nav links
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                // Add active class to clicked link
+                link.classList.add('active');
+                
+                // Simulate page navigation with animation
+                this.animatePageTransition();
+            }
+
+            handleTabChange(button) {
+                // Update active tab
+                document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+                button.classList.add('active');
+                
+                // Update current tab
+                this.currentTab = button.dataset.tab;
+                this.updateContent();
+                this.updateFilterCounts();
+            }
+
+            handleFilterChange(tab) {
+                // Update active filter
+                document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                // Update current filter
+                this.currentFilter = tab.dataset.filter;
+                this.updateContent();
+            }
+
+            handleSearch(query) {
+                // Implement search functionality
+                console.log('Searching for:', query);
+                // Add loading state
+                this.showLoading();
+                
+                // Simulate search delay
+                setTimeout(() => {
+                    this.hideLoading();
+                    this.updateContent();
+                }, 500);
+            }
+
+            handleBatchChange(batch) {
+                console.log('Batch changed to:', batch);
+                this.updateContent();
+            }
+
+            updateContent() {
+                const contentArea = document.getElementById('contentArea');
+                const currentData = this.evaluations[this.currentTab][this.currentFilter];
+                
+                if (currentData.length === 0) {
+                    this.showEmptyState();
+                } else {
+                    this.showEvaluations(currentData);
+                }
+            }
+
+            showEmptyState() {
+                const contentArea = document.getElementById('contentArea');
+                const emptyStateMessages = {
+                    'to-evaluate': {
+                        pending: 'No pending evaluations assigned to you.',
+                        completed: 'No completed evaluations found.',
+                        all: 'No evaluations assigned to you yet.'
+                    },
+                    'your-evaluations': {
+                        pending: 'No pending evaluations of your work.',
+                        completed: 'No completed evaluations of your work.',
+                        all: 'No evaluations of your work available.'
+                    }
+                };
+
+                const message = emptyStateMessages[this.currentTab][this.currentFilter] || 
+                               'No evaluations available in this category';
+
+                contentArea.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                        <h3 class="empty-title">No evaluations available</h3>
+                        <p class="empty-description">${message}</p>
+                    </div>
+                `;
+            }
+
+            showEvaluations(evaluations) {
+                const contentArea = document.getElementById('contentArea');
+                // Implementation for showing evaluation cards would go here
+                contentArea.innerHTML = '<div class="evaluations-grid">Evaluations would be displayed here</div>';
+            }
+
+            updateCounts() {
+                // Update badge counts
+                const toEvaluateCount = this.evaluations['to-evaluate'].pending.length;
+                const yourEvaluationsCount = this.evaluations['your-evaluations'].pending.length;
+                
+                document.getElementById('toEvaluateCount').textContent = toEvaluateCount;
+                document.getElementById('yourEvaluationsCount').textContent = yourEvaluationsCount;
+            }
+
+            updateFilterCounts() {
+                const filterTabs = document.querySelectorAll('.filter-tab');
+                filterTabs.forEach(tab => {
+                    const filter = tab.dataset.filter;
+                    if (filter !== 'all') {
+                        const count = this.evaluations[this.currentTab][filter].length;
+                        tab.textContent = `${filter.charAt(0).toUpperCase() + filter.slice(1)} (${count})`;
+                    }
+                });
+            }
+
+            loadMockData() {
+                // Simulate loading data
+                setTimeout(() => {
+                    // Mock data would be loaded here
+                    this.updateCounts();
+                    this.updateFilterCounts();
+                }, 1000);
+            }
+
+            showLoading() {
+                const contentArea = document.getElementById('contentArea');
+                contentArea.innerHTML = `
+                    <div class="empty-state">
+                        <div class="loading"></div>
+                        <h3 class="empty-title">Loading evaluations...</h3>
+                    </div>
+                `;
+            }
+
+            hideLoading() {
+                // Content will be updated by other methods
+            }
+
+            animatePageTransition() {
+                const mainContent = document.querySelector('.main-content');
+                mainContent.style.opacity = '0.7';
+                mainContent.style.transform = 'translateY(10px)';
+                
+                setTimeout(() => {
+                    mainContent.style.opacity = '1';
+                    mainContent.style.transform = 'translateY(0)';
+                }, 200);
+            }
+
+            toggleTheme() {
+                // Theme toggle functionality would be implemented here
+                const icon = document.querySelector('.theme-toggle i');
+                icon.classList.toggle('fa-sun');
+                icon.classList.toggle('fa-moon');
+            }
+
+            toggleMobileMenu() {
+                const sidebar = document.getElementById('sidebar');
+                sidebar.classList.toggle('open');
+            }
+
+            handleResponsive() {
+                const handleResize = () => {
+                    const isMobile = window.innerWidth <= 768;
+                    const sidebar = document.getElementById('sidebar');
+                    
+                    if (!isMobile) {
+                        sidebar.classList.remove('open');
+                    }
+                };
+
+                window.addEventListener('resize', handleResize);
+                handleResize(); // Initial call
+            }
+
+            handleKeyboardNavigation(e) {
+                // Implement keyboard shortcuts
+                if (e.ctrlKey || e.metaKey) {
+                    switch(e.key) {
+                        case 'k':
+                            e.preventDefault();
+                            document.getElementById('searchInput').focus();
+                            break;
+                        case '1':
+                            e.preventDefault();
+                            document.querySelector('[data-tab="to-evaluate"]').click();
+                            break;
+                        case '2':
+                            e.preventDefault();
+                            document.querySelector('[data-tab="your-evaluations"]').click();
+                            break;
+                    }
+                }
+            }
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', () => {
+            new EvaluationInterface();
+        });
+
+        // Add some visual enhancements
+        document.addEventListener('mousemove', (e) => {
+            const cursor = document.createElement('div');
+            cursor.className = 'cursor-trail';
+            cursor.style.cssText = `
+                position: fixed;
+                width: 4px;
+                height: 4px;
+                background: var(--accent-blue);
+                border-radius: 50%;
+                pointer-events: none;
+                z-index: 9999;
+                opacity: 0.7;
+                left: ${e.clientX}px;
+                top: ${e.clientY}px;
+                animation: cursorFade 0.5s ease-out forwards;
+            `;
+            
+            document.body.appendChild(cursor);
+            
+            setTimeout(() => {
+                cursor.remove();
+            }, 500);
+        });
+
+        // Add cursor fade animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes cursorFade {
+                to {
+                    opacity: 0;
+                    transform: scale(0.5);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MasterJi - Blog Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-bg: #1a1a1a;
+            --secondary-bg: #2d2d2d;
+            --accent-color: #ff6b35;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --border-color: #404040;
+            --hover-bg: #3a3a3a;
+            --success-color: #4caf50;
+            --warning-color: #ff9800;
+            --info-color: #2196f3;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--primary-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            background-color: var(--secondary-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar.collapsed {
+            width: 60px;
+        }
+
+        .logo {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--accent-color), #ff8c5a);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar.collapsed .logo-text {
+            opacity: 0;
+        }
+
+        .nav-menu {
+            flex: 1;
+            padding: 1rem 0;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            gap: 0.75rem;
+        }
+
+        .nav-item:hover {
+            background-color: var(--hover-bg);
+            color: var(--text-primary);
+        }
+
+        .nav-item.active {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background-color: #fff;
+        }
+
+        .nav-icon {
+            width: 20px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .nav-text {
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar.collapsed .nav-text {
+            opacity: 0;
+        }
+
+        .user-profile {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--info-color), #64b5f6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .user-info {
+            transition: opacity 0.3s ease;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .user-status {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .sidebar.collapsed .user-info {
+            opacity: 0;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            background-color: var(--primary-bg);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .header {
+            padding: 2rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-left {
+            flex: 1;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 0.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            color: var(--text-primary);
+            border-color: var(--accent-color);
+        }
+
+        .sidebar-toggle {
+            display: none;
+            background: none;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-toggle:hover {
+            color: var(--text-primary);
+            border-color: var(--accent-color);
+        }
+
+        .content-area {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .controls-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-container {
+            position: relative;
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            background-color: var(--secondary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .filter-select {
+            padding: 0.75rem 1rem;
+            background-color: var(--secondary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            min-width: 140px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        .tabs-container {
+            margin-bottom: 2rem;
+        }
+
+        .tabs-list {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 2rem;
+        }
+
+        .tab {
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .tab:hover {
+            color: var(--text-primary);
+        }
+
+        .tab.active {
+            color: var(--text-primary);
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: var(--accent-color);
+        }
+
+        .tab-badge {
+            background-color: var(--secondary-bg);
+            color: var(--text-secondary);
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin-left: 0.5rem;
+        }
+
+        .tab.active .tab-badge {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .empty-description {
+            font-size: 0.95rem;
+            max-width: 400px;
+            margin: 0 auto 2rem;
+            line-height: 1.6;
+        }
+
+        .create-blog-btn {
+            background: linear-gradient(135deg, var(--accent-color), #ff8c5a);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .create-blog-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.3);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .content-area > * {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .dashboard-container {
+                grid-template-columns: 1fr;
+                position: relative;
+            }
+
+            .sidebar {
+                position: fixed;
+                left: -280px;
+                top: 0;
+                width: 280px;
+                height: 100vh;
+                z-index: 1000;
+                transition: left 0.3s ease;
+            }
+
+            .sidebar.open {
+                left: 0;
+            }
+
+            .sidebar-toggle {
+                display: block;
+            }
+
+            .controls-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-container {
+                min-width: auto;
+            }
+
+            .filter-group {
+                justify-content: space-between;
+            }
+
+            .filter-select {
+                flex: 1;
+            }
+
+            .tabs-list {
+                overflow-x: auto;
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+            }
+
+            .tabs-list::-webkit-scrollbar {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 1rem;
+            }
+
+            .content-area {
+                padding: 1rem;
+            }
+
+            .page-title {
+                font-size: 1.5rem;
+            }
+
+            .empty-state {
+                padding: 2rem 1rem;
+            }
+
+            .empty-icon {
+                font-size: 3rem;
+            }
+        }
+
+        /* Overlay for mobile sidebar */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            border-top-color: var(--accent-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="logo">
+                <div class="logo-icon">M</div>
+                <span class="logo-text">MasterJi</span>
+            </div>
+            
+            <nav class="nav-menu">
+                <a href="Dashboard.html" class="nav-item">
+                    <i class="fas fa-home nav-icon"></i>
+                    <span class="nav-text">Dashboard</span>
+                </a>
+                <a href="Peer_Reviews.html" class="nav-item">
+                    <i class="fas fa-users nav-icon"></i>
+                    <span class="nav-text">Peer Reviews</span>
+                </a>
+                <a href="Projects.html" class="nav-item">
+                    <i class="fas fa-folder nav-icon"></i>
+                    <span class="nav-text">Projects</span>
+                </a>
+                <a href="Blogs.html" class="nav-item active">
+                    <i class="fas fa-blog nav-icon"></i>
+                    <span class="nav-text">Blogs</span>
+                </a>
+                <a href="Evaluations.html" class="nav-item">
+                    <i class="fas fa-chart-bar nav-icon"></i>
+                    <span class="nav-text">Evaluations</span>
+                </a>
+            </nav>
+            
+            <div class="user-profile">
+                <div class="user-avatar">N</div>
+                <div class="user-info">
+                    <div class="user-name">nōn one</div>
+                    <div class="user-status">Online</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Sidebar Overlay for Mobile -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header">
+                <div class="header-left">
+                    <h1 class="page-title">Blogs</h1>
+                    <p class="page-subtitle">Write blogs on the following topics on Hashnode and submit Hashnode blog links.</p>
+                </div>
+                <div class="header-actions">
+                    <button class="sidebar-toggle" id="sidebarToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <button class="theme-toggle" id="themeToggle">
+                        <i class="fas fa-sun"></i>
+                    </button>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <div class="controls-bar">
+                    <div class="search-container">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" class="search-input" placeholder="Search Blog" id="searchInput">
+                    </div>
+                    <div class="filter-group">
+                        <select class="filter-select" id="batchFilter">
+                            <option>All Batches</option>
+                            <option>Batch 1</option>
+                            <option>Batch 2</option>
+                            <option>Batch 3</option>
+                        </select>
+                        <select class="filter-select" id="categoryFilter">
+                            <option>All Categories</option>
+                            <option>Technology</option>
+                            <option>Programming</option>
+                            <option>Web Development</option>
+                            <option>Data Science</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="tabs-container">
+                    <div class="tabs-list">
+                        <button class="tab active" data-tab="live">
+                            Live
+                            <span class="tab-badge">0</span>
+                        </button>
+                        <button class="tab" data-tab="upcoming">
+                            Upcoming
+                            <span class="tab-badge">0</span>
+                        </button>
+                        <button class="tab" data-tab="past">
+                            Past
+                            <span class="tab-badge">0</span>
+                        </button>
+                    </div>
+
+                    <div class="tab-content" id="tabContent">
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <i class="fas fa-blog"></i>
+                            </div>
+                            <h3 class="empty-title">No blog topics available</h3>
+                            <p class="empty-description">
+                                There are currently no blog topics available in this category. 
+                                Check back later or explore other categories to find interesting topics to write about.
+                            </p>
+                            <button class="create-blog-btn">
+                                <i class="fas fa-plus"></i>
+                                Create New Blog
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        class BlogDashboard {
+            constructor() {
+                this.initializeElements();
+                this.bindEvents();
+                this.initializeTheme();
+                this.simulateData();
+            }
+
+            initializeElements() {
+                this.sidebar = document.getElementById('sidebar');
+                this.sidebarToggle = document.getElementById('sidebarToggle');
+                this.sidebarOverlay = document.getElementById('sidebarOverlay');
+                this.themeToggle = document.getElementById('themeToggle');
+                this.searchInput = document.getElementById('searchInput');
+                this.batchFilter = document.getElementById('batchFilter');
+                this.categoryFilter = document.getElementById('categoryFilter');
+                this.tabs = document.querySelectorAll('.tab');
+                this.tabContent = document.getElementById('tabContent');
+                
+                this.currentTab = 'live';
+                this.isDarkTheme = true;
+            }
+
+            bindEvents() {
+                // Sidebar toggle
+                this.sidebarToggle.addEventListener('click', () => this.toggleSidebar());
+                this.sidebarOverlay.addEventListener('click', () => this.closeSidebar());
+
+                // Theme toggle
+                this.themeToggle.addEventListener('click', () => this.toggleTheme());
+
+                // Tab switching
+                this.tabs.forEach(tab => {
+                    tab.addEventListener('click', (e) => this.switchTab(e.target.dataset.tab));
+                });
+
+                // Search functionality
+                this.searchInput.addEventListener('input', (e) => this.handleSearch(e.target.value));
+
+                // Filter functionality
+                this.batchFilter.addEventListener('change', () => this.applyFilters());
+                this.categoryFilter.addEventListener('change', () => this.applyFilters());
+
+                // Responsive handling
+                window.addEventListener('resize', () => this.handleResize());
+
+                // Navigation items
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.addEventListener('click', (e) => this.handleNavigation(e));
+                });
+            }
+
+            toggleSidebar() {
+                if (window.innerWidth <= 768) {
+                    this.sidebar.classList.toggle('open');
+                    this.sidebarOverlay.classList.toggle('active');
+                } else {
+                    this.sidebar.classList.toggle('collapsed');
+                }
+            }
+
+            closeSidebar() {
+                this.sidebar.classList.remove('open');
+                this.sidebarOverlay.classList.remove('active');
+            }
+
+            toggleTheme() {
+                this.isDarkTheme = !this.isDarkTheme;
+                const icon = this.themeToggle.querySelector('i');
+                
+                if (this.isDarkTheme) {
+                    icon.className = 'fas fa-sun';
+                    document.documentElement.style.setProperty('--primary-bg', '#1a1a1a');
+                    document.documentElement.style.setProperty('--secondary-bg', '#2d2d2d');
+                } else {
+                    icon.className = 'fas fa-moon';
+                    document.documentElement.style.setProperty('--primary-bg', '#ffffff');
+                    document.documentElement.style.setProperty('--secondary-bg', '#f5f5f5');
+                }
+                
+                localStorage.setItem('theme', this.isDarkTheme ? 'dark' : 'light');
+            }
+
+            initializeTheme() {
+                const savedTheme = localStorage.getItem('theme');
+                if (savedTheme) {
+                    this.isDarkTheme = savedTheme === 'dark';
+                    if (!this.isDarkTheme) {
+                        this.toggleTheme();
+                    }
+                }
+            }
+
+            switchTab(tabName) {
+                if (!tabName) return;
+
+                // Update active tab
+                this.tabs.forEach(tab => tab.classList.remove('active'));
+                document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+                
+                this.currentTab = tabName;
+                this.updateTabContent();
+            }
+
+            updateTabContent() {
+                // Simulate loading
+                this.tabContent.innerHTML = '<div style="text-align: center; padding: 2rem;"><div class="loading"></div></div>';
+                
+                setTimeout(() => {
+                    this.renderTabContent();
+                }, 500);
+            }
+
+            renderTabContent() {
+                const emptyStates = {
+                    live: {
+                        icon: 'fas fa-broadcast-tower',
+                        title: 'No live blog topics',
+                        description: 'There are currently no active blog topics. New topics will appear here when they become available.',
+                        buttonText: 'Create Live Topic'
+                    },
+                    upcoming: {
+                        icon: 'fas fa-clock',
+                        title: 'No upcoming blog topics',
+                        description: 'No blog topics are scheduled for the future. Stay tuned for new announcements and upcoming assignments.',
+                        buttonText: 'Schedule Topic'
+                    },
+                    past: {
+                        icon: 'fas fa-history',
+                        title: 'No past blog topics',
+                        description: 'Your completed blog topics and submissions will appear here once you start writing and submitting blogs.',
+                        buttonText: 'View Archive'
+                    }
+                };
+
+                const state = emptyStates[this.currentTab];
+                
+                this.tabContent.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="${state.icon}"></i>
+                        </div>
+                        <h3 class="empty-title">${state.title}</h3>
+                        <p class="empty-description">${state.description}</p>
+                        <button class="create-blog-btn">
+                            <i class="fas fa-plus"></i>
+                            ${state.buttonText}
+                        </button>
+                    </div>
+                `;
+            }
+
+            handleSearch(query) {
+                console.log('Searching for:', query);
+                // Implement search functionality here
+                this.showSearchResults(query);
+            }
+
+            showSearchResults(query) {
+                if (query.trim() === '') {
+                    this.updateTabContent();
+                    return;
+                }
+
+                this.tabContent.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <h3 class="empty-title">No results found</h3>
+                        <p class="empty-description">
+                            No blog topics match your search for "${query}". 
+                            Try adjusting your keywords or browse all available topics.
+                        </p>
+                        <button class="create-blog-btn" onclick="document.getElementById('searchInput').value = ''; blogDashboard.updateTabContent();">
+                            <i class="fas fa-times"></i>
+                            Clear Search
+                        </button>
+                    </div>
+                `;
+            }
+
+            applyFilters() {
+                const batch = this.batchFilter.value;
+                const category = this.categoryFilter.value;
+                console.log('Applying filters:', { batch, category });
+                // Implement filter functionality here
+            }
+
+            handleResize() {
+                if (window.innerWidth > 768) {
+                    this.closeSidebar();
+                }
+            }
+
+            handleNavigation(e) {
+                e.preventDefault();
+                
+                // Update active navigation
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                e.target.closest('.nav-item').classList.add('active');
+
+                // Close sidebar on mobile after navigation
+                if (window.innerWidth <= 768) {
+                    this.closeSidebar();
+                }
+            }
+
+            simulateData() {
+                // Simulate dynamic badge updates
+                setTimeout(() => {
+                    const badges = document.querySelectorAll('.tab-badge');
+                    badges[0].textContent = '2'; // Live
+                    badges[1].textContent = '5'; // Upcoming
+                    badges[2].textContent = '12'; // Past
+                }, 2000);
+            }
+        }
+
+        // Initialize dashboard when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            window.blogDashboard = new BlogDashboard();
+        });
+
+        // Add some interactive features
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.create-blog-btn')) {
+                e.preventDefault();
+                
+                // Simulate blog creation
+                const btn = e.target.closest('.create-blog-btn');
+                const originalText = btn.innerHTML;
+                
+                btn.innerHTML = '<div class="loading"></div> Creating...';
+                btn.disabled = true;
+                
+                setTimeout(() => {
+                    btn.innerHTML = '<i class="fas fa-check"></i> Success!';
+                    setTimeout(() => {
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                    }, 2000);
+                }, 1500);
+            }
+        });
+
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key) {
+                    case 'k':
+                        e.preventDefault();
+                        document.getElementById('searchInput').focus();
+                        break;
+                    case 'b':
+                        e.preventDefault();
+                        blogDashboard.toggleSidebar();
+                        break;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

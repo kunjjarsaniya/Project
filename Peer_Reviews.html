@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MasterJi - Peer Review Platform</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-bg: #1a1a1a;
+            --secondary-bg: #2d2d2d;
+            --accent-color: #ff6b35;
+            --accent-hover: #e55a2b;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --border-color: #404040;
+            --success-color: #4caf50;
+            --warning-color: #ff9800;
+            --info-color: #2196f3;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--primary-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 100vh;
+            transition: var(--transition);
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            background: var(--secondary-bg);
+            padding: 2rem 1.5rem;
+            border-right: 1px solid var(--border-color);
+            position: relative;
+            overflow-y: auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 3rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .logo i {
+            font-size: 2rem;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 12px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 107, 53, 0.1), transparent);
+            transition: var(--transition);
+        }
+
+        .nav-link:hover::before {
+            left: 100%;
+        }
+
+        .nav-link:hover {
+            color: var(--text-primary);
+            background: rgba(255, 107, 53, 0.1);
+            transform: translateX(4px);
+        }
+
+        .nav-link.active {
+            background: var(--accent-color);
+            color: var(--text-primary);
+            box-shadow: 0 4px 20px rgba(255, 107, 53, 0.3);
+        }
+
+        .nav-link i {
+            font-size: 1.2rem;
+            width: 20px;
+        }
+
+        .user-profile {
+            position: absolute;
+            bottom: 2rem;
+            left: 1.5rem;
+            right: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem;
+            background: rgba(255, 107, 53, 0.1);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 107, 53, 0.2);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            background: var(--primary-bg);
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .header {
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--accent-color), #ff8c42);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            align-items: center;
+        }
+
+        .search-container {
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            background: var(--secondary-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 1.5rem;
+            background: var(--secondary-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: var(--transition);
+            min-width: 160px;
+            justify-content: space-between;
+        }
+
+        .dropdown-btn:hover {
+            border-color: var(--accent-color);
+            background: rgba(255, 107, 53, 0.05);
+        }
+
+        .dropdown-content {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--secondary-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            margin-top: 0.5rem;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: var(--transition);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .dropdown.active .dropdown-content {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(255, 107, 53, 0.1);
+            color: var(--accent-color);
+        }
+
+        .dropdown-item.selected {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .tab {
+            padding: 1rem 2rem;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: var(--transition);
+            border-bottom: 3px solid transparent;
+            position: relative;
+        }
+
+        .tab:hover {
+            color: var(--text-primary);
+            background: rgba(255, 107, 53, 0.05);
+        }
+
+        .tab.active {
+            color: var(--accent-color);
+            border-bottom-color: var(--accent-color);
+            background: rgba(255, 107, 53, 0.1);
+        }
+
+        .tab-badge {
+            background: var(--accent-color);
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin-left: 0.5rem;
+        }
+
+        .content-area {
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: var(--text-secondary);
+            max-width: 400px;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: var(--border-color);
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .assignment-card {
+            background: var(--secondary-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .assignment-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--accent-color);
+            transform: scaleY(0);
+            transition: var(--transition);
+        }
+
+        .assignment-card:hover {
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .assignment-card:hover::before {
+            transform: scaleY(1);
+        }
+
+        .assignment-header {
+            display: flex;
+            justify-content: between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+
+        .assignment-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .assignment-meta {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .status-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-live {
+            background: rgba(76, 175, 80, 0.2);
+            color: var(--success-color);
+        }
+
+        .status-upcoming {
+            background: rgba(33, 150, 243, 0.2);
+            color: var(--info-color);
+        }
+
+        .status-past {
+            background: rgba(255, 152, 0, 0.2);
+            color: var(--warning-color);
+        }
+
+        /* Category Sidebar */
+        .category-sidebar {
+            position: fixed;
+            right: -300px;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: var(--secondary-bg);
+            border-left: 1px solid var(--border-color);
+            padding: 2rem 1.5rem;
+            z-index: 1000;
+            transition: var(--transition);
+            overflow-y: auto;
+        }
+
+        .category-sidebar.active {
+            right: 0;
+        }
+
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .category-list {
+            list-style: none;
+        }
+
+        .category-item {
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .category-item:hover {
+            background: rgba(255, 107, 53, 0.1);
+            color: var(--accent-color);
+        }
+
+        .category-item.selected {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .app-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                position: fixed;
+                left: -280px;
+                top: 0;
+                height: 100vh;
+                z-index: 1000;
+                transition: var(--transition);
+            }
+            
+            .sidebar.active {
+                left: 0;
+            }
+            
+            .main-content {
+                padding: 1rem;
+            }
+            
+            .controls {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .tabs {
+                overflow-x: auto;
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+            }
+            
+            .tabs::-webkit-scrollbar {
+                display: none;
+            }
+            
+            .tab {
+                white-space: nowrap;
+                padding: 1rem 1.5rem;
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            border-top-color: var(--accent-color);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Floating Action Button */
+        .fab {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            background: var(--accent-color);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(255, 107, 53, 0.3);
+            transition: var(--transition);
+            z-index: 1000;
+        }
+
+        .fab:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 30px rgba(255, 107, 53, 0.4);
+        }
+
+        /* Notification Toast */
+        .toast {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: var(--success-color);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            transform: translateX(400px);
+            transition: var(--transition);
+            z-index: 1001;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--primary-bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="logo">
+                <i class="fas fa-graduation-cap"></i>
+                <span>MasterJi</span>
+            </div>
+            
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="Dashboard.html" class="nav-link">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="Peer_Reviews.html" class="nav-link active">
+                            <i class="fas fa-users"></i>
+                            <span>Peer Reviews</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="Projects.html" class="nav-link">
+                            <i class="fas fa-project-diagram"></i>
+                            <span>Projects</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="Blogs.html" class="nav-link">
+                            <i class="fas fa-blog"></i>
+                            <span>Blogs</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="Evaluations.html" class="nav-link">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Evaluations</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="user-profile">
+                <div class="user-avatar">N</div>
+                <div>
+                    <div style="font-weight: 600; font-size: 0.9rem;">nΘn one</div>
+                    <div style="font-size: 0.8rem; color: var(--text-secondary);">Student</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header">
+                <h1>Peer Reviews</h1>
+                <p>Submit your work and receive detailed feedback from peers.</p>
+            </header>
+
+            <div class="controls">
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="search-input" placeholder="Search Assignments" id="searchInput">
+                </div>
+                
+                <div class="dropdown" id="batchDropdown">
+                    <button class="dropdown-btn">
+                        <span>All Batches</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="dropdown-content">
+                        <div class="dropdown-item selected">All Batches</div>
+                        <div class="dropdown-item">Batch 2024-A</div>
+                        <div class="dropdown-item">Batch 2024-B</div>
+                        <div class="dropdown-item">Batch 2023-A</div>
+                    </div>
+                </div>
+                
+                <div class="dropdown" id="categoryDropdown">
+                    <button class="dropdown-btn">
+                        <span>All Categories</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="dropdown-content">
+                        <div class="dropdown-item selected">All Categories</div>
+                        <div class="dropdown-item">Data Science</div>
+                        <div class="dropdown-item">DevOps</div>
+                        <div class="dropdown-item">DSA</div>
+                        <div class="dropdown-item">GenAI</div>
+                        <div class="dropdown-item">JavaScript</div>
+                        <div class="dropdown-item">Node.js</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" data-tab="live">
+                    Live
+                    <span class="tab-badge" id="liveBadge">3</span>
+                </button>
+                <button class="tab" data-tab="upcoming">
+                    Upcoming
+                    <span class="tab-badge" id="upcomingBadge">5</span>
+                </button>
+                <button class="tab" data-tab="past">
+                    Past
+                    <span class="tab-badge" id="pastBadge">12</span>
+                </button>
+            </div>
+
+            <div class="content-area" id="contentArea">
+                <div class="empty-state" id="emptyState">
+                    <i class="fas fa-clipboard-list"></i>
+                    <h3>No assignments available</h3>
+                    <p>There are currently no assignments in this category. Check back later or try a different filter.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Floating Action Button -->
+    <button class="fab" id="fabBtn" title="Add New Assignment">
+        <i class="fas fa-plus"></i>
+    </button>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        Assignment added successfully!
+    </div>
+
+    <script>
+        // Global state management
+        const state = {
+            currentTab: 'live',
+            selectedBatch: 'All Batches',
+            selectedCategory: 'All Categories',
+            searchQuery: '',
+            assignments: {
+                live: [
+                    {
+                        id: 1,
+                        title: 'Machine Learning Algorithm Implementation',
+                        category: 'Data Science',
+                        batch: 'Batch 2024-A',
+                        deadline: '2025-06-15',
+                        status: 'live',
+                        description: 'Implement and compare different ML algorithms'
+                    },
+                    {
+                        id: 2,
+                        title: 'Docker Container Optimization',
+                        category: 'DevOps',
+                        batch: 'Batch 2024-B',
+                        deadline: '2025-06-20',
+                        status: 'live',
+                        description: 'Optimize Docker containers for production'
+                    },
+                    {
+                        id: 3,
+                        title: 'React Native Mobile App',
+                        category: 'JavaScript',
+                        batch: 'Batch 2024-A',
+                        deadline: '2025-06-18',
+                        status: 'live',
+                        description: 'Build a cross-platform mobile application'
+                    }
+                ],
+                upcoming: [
+                    {
+                        id: 4,
+                        title: 'Binary Search Tree Implementation',
+                        category: 'DSA',
+                        batch: 'Batch 2024-A',
+                        deadline: '2025-06-25',
+                        status: 'upcoming',
+                        description: 'Implement BST with all operations'
+                    },
+                    {
+                        id: 5,
+                        title: 'GPT Fine-tuning Project',
+                        category: 'GenAI',
+                        batch: 'Batch 2024-B',
+                        deadline: '2025-06-30',
+                        status: 'upcoming',
+                        description: 'Fine-tune a language model for specific tasks'
+                    }
+                ],
+                past: [
+                    {
+                        id: 6,
+                        title: 'Node.js REST API',
+                        category: 'Node.js',
+                        batch: 'Batch 2023-A',
+                        deadline: '2025-05-15',
+                        status: 'past',
+                        description: 'Build a complete REST API with authentication'
+                    }
+                ]
+            }
+        };
+
+        // DOM elements
+        const elements = {
+            tabs: document.querySelectorAll('.tab'),
+            contentArea: document.getElementById('contentArea'),
+            emptyState: document.getElementById('emptyState'),
+            searchInput: document.getElementById('searchInput'),
+            batchDropdown: document.getElementById('batchDropdown'),
+            categoryDropdown: document.getElementById('categoryDropdown'),
+            fabBtn: document.getElementById('fabBtn'),
+            toast: document.getElementById('toast'),
+            sidebar: document.getElementById('sidebar')
+        };
+
+        // Initialize the application
+        function init() {
+            setupEventListeners();
+            renderContent();
+            updateBadges();
+        }
+
+        // Event listeners setup
+        function setupEventListeners() {
+            // Tab switching
+            elements.tabs.forEach(tab => {
+                tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+            });
+
+            // Search functionality
+            elements.searchInput.addEventListener('input', handleSearch);
+
+            // Dropdown functionality
+            setupDropdown(elements.batchDropdown, 'selectedBatch');
+            setupDropdown(elements.categoryDropdown, 'selectedCategory');
+
+            // FAB button
+            elements.fabBtn.addEventListener('click', showAddAssignmentForm);
+
+            // Mobile menu toggle
+            setupMobileMenu();
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', handleKeyboardShortcuts);
+        }
+
+        // Tab switching functionality
+        function switchTab(tabName) {
+            state.currentTab = tabName;
+            
+            // Update tab appearance
+            elements.tabs.forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.tab === tabName);
+            });
+
+            // Add smooth transition
+            elements.contentArea.style.opacity = '0';
+            setTimeout(() => {
+                renderContent();
+                elements.contentArea.style.opacity = '1';
+            }, 150);
+        }
+
+        // Search functionality
+        function handleSearch(e) {
+            state.searchQuery = e.target.value.toLowerCase();
+            renderContent();
+        }
+
+        // Dropdown setup
+        function setupDropdown(dropdown, stateKey) {
+            const btn = dropdown.querySelector('.dropdown-btn');
+            const content = dropdown.querySelector('.dropdown-content');
+            const items = content.querySelectorAll('.dropdown-item');
+
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                closeAllDropdowns();
+                dropdown.classList.toggle('active');
+            });
+
+            items.forEach(item => {
+                item.addEventListener('click', () => {
+                    const value = item.textContent;
+                    state[stateKey] = value;
+                    btn.querySelector('span').textContent = value;
+                    
+                    // Update selected state
+                    items.forEach(i => i.classList.remove('selected'));
+                    item.classList.add('selected');
+                    
+                    dropdown.classList.remove('active');
+                    renderContent();
+                });
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', () => {
+                dropdown.classList.remove('active');
+            });
+        }
+
+        // Close all dropdowns
+        function closeAllDropdowns() {
+            document.querySelectorAll('.dropdown').forEach(dropdown => {
+                dropdown.classList.remove('active');
+            });
+        }
+
+        // Render content based on current state
+        function renderContent() {
+            const filteredAssignments = getFilteredAssignments();
+            
+            if (filteredAssignments.length === 0) {
+                showEmptyState();
+            } else {
+                showAssignments(filteredAssignments);
+            }
+        }
+
+        // Filter assignments based on current state
+        function getFilteredAssignments() {
+            let assignments = state.assignments[state.currentTab] || [];
+
+            // Apply filters
+            if (state.selectedBatch !== 'All Batches') {
+                assignments = assignments.filter(a => a.batch === state.selectedBatch);
+            }
+
+            if (state.selectedCategory !== 'All Categories') {
+                assignments = assignments.filter(a => a.category === state.selectedCategory);
+            }
+
+            if (state.searchQuery) {
+                assignments = assignments.filter(a => 
+                    a.title.toLowerCase().includes(state.searchQuery) ||
+                    a.description.toLowerCase().includes(state.searchQuery) ||
+                    a.category.toLowerCase().includes(state.searchQuery)
+                );
+            }
+
+            return assignments;
+        }
+
+        // Show empty state
+        function showEmptyState() {
+            elements.contentArea.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-clipboard-list"></i>
+                    <h3>No assignments available</h3>
+                    <p>There are currently no assignments matching your criteria. Try adjusting your filters or check back later.</p>
+                </div>
+            `;
+        }
+
+        // Show assignments
+        function showAssignments(assignments) {
+            const assignmentsHTML = assignments.map(assignment => `
+                <div class="assignment-card" onclick="openAssignment(${assignment.id})">
+                    <div class="assignment-header">
+                        <div>
+                            <h3 class="assignment-title">${assignment.title}</h3>
+                            <div class="assignment-meta">
+                                <span><i class="fas fa-tag"></i> ${assignment.category}</span>
+                                <span><i class="fas fa-users"></i> ${assignment.batch}</span>
+                                <span><i class="fas fa-calendar"></i> Due: ${formatDate(assignment.deadline)}</span>
+                            </div>
+                        </div>
+                        <span class="status-badge status-${assignment.status}">${assignment.status}</span>
+                    </div>
+                    <p style="color: var(--text-secondary);">${assignment.description}</p>
+                </div>
+            `).join('');
+            
+            elements.contentArea.innerHTML = assignmentsHTML;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CourseCompass - Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="styles/main.css" rel="stylesheet">
+    <link href="styles/dashboard.css" rel="stylesheet">
+</head>
+<body class="dark-theme">
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="logo">
+                <div class="logo-icon">CC</div>
+                <span class="logo-text">CourseCompass</span>
+            </div>
+            
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="Dashboard.html" class="nav-link active" data-page="dashboard">
+                            <i class="nav-icon fas fa-home"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="Peer_Reviews.html" class="nav-link" data-page="peer-reviews">
+                            <i class="nav-icon fas fa-users"></i>
+                            <span>Peer Reviews</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="Projects.html" class="nav-link" data-page="projects">
+                            <i class="nav-icon fas fa-folder"></i>
+                            <span>Projects</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="Blogs.html" class="nav-link" data-page="blogs">
+                            <i class="nav-icon fas fa-blog"></i>
+                            <span>Blogs</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="Evaluations.html" class="nav-link" data-page="evaluations">
+                            <i class="nav-icon fas fa-clipboard-check"></i>
+                            <span>Evaluations</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="user-profile">
+                <div class="user-avatar">N</div>
+                <div class="user-info">
+                    <h4>n8n one</h4>
+                    <p>Student</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content" id="mainContent">
+            <!-- Header -->
+            <header class="header">
+                <button class="hamburger" id="hamburger">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="header-left">
+                    <h1 class="header-title">Dashboard</h1>
+                    <p class="header-subtitle">Overview of your progress and upcoming deadlines.</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-secondary" id="noticeBoardBtn">
+                        <i class="fas fa-bell"></i>
+                        View Notice Board
+                    </button>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <div class="dashboard-content">
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-title">
+                                <i class="stat-icon fas fa-users"></i>
+                                Peer Reviews
+                            </div>
+                        </div>
+                        <div class="stat-value">0</div>
+                        <div class="stat-details">
+                            <div class="stat-item">
+                                <span class="stat-label">Total</span>
+                                <span class="stat-badge badge-success">0</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Pending</span>
+                                <span class="stat-badge badge-error">0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Other stat cards would follow same structure -->
+                </div>
+
+                <!-- Achievements Section -->
+                <div class="achievements-section">
+                    <!-- Achievement cards would go here -->
+                </div>
+
+                <!-- Upcoming Deadlines -->
+                <div class="deadlines-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-clock"></i>
+                        Upcoming Deadlines
+                    </h2>
+                    <div class="no-deadlines">
+                        <i class="fas fa-calendar-check"></i>
+                        <p>No upcoming deadlines. You're all caught up!</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Notice Board Modal -->
+    <div class="modal" id="noticeModal">
+        <div class="modal-content">
+            <button class="modal-close" id="modalClose">
+                <i class="fas fa-times"></i>
+            </button>
+            <h2 class="section-title">
+                <i class="fas fa-bell"></i>
+                Notice Board
+            </h2>
+            <p>Keep track of important announcements and reminders.</p>
+            <div class="no-deadlines">
+                <i class="fas fa-bell-slash"></i>
+                <p>No notices found.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>
